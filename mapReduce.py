@@ -1,8 +1,18 @@
+"""
+MapReduce is a data processing job which splits the input data into independent chunks,
+which are then processed by the map function and
+then reduced by grouping similar sets of the data.
+
+"""
+
 import pandas as pd
 
-df = pd.read_csv('dataset/HepatitisCdata.csv')
+df = pd.read_csv('HepatitisCdata.csv')
 print(df.shape)
 
+print(df)
+
+exit()
 
 """ tentukan dulu studi kasusnya
 - map untuk mengubah data hasil hasilnya n to n
@@ -40,4 +50,3 @@ for num in list:
 from functools import reduce
 product = reduce((lambda x, y: x * y), [1, 2, 3, 4])
 
-# Output: 24
