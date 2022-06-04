@@ -1,3 +1,6 @@
+# Menghitung kategory secara simultan
+# Hadoop
+
 from mrjob.job import MRJob
 from mrjob.step import MRStep
 import csv
@@ -15,9 +18,9 @@ class MapReduce(MRJob):
        for row in reader:
            zipped=zip(columns,row)
            diction=dict(zipped)
-           category=diction['Age']
+           age=diction['Age']
            #outputing as key value pairs
-           yield category, 1
+           yield age, 1
 #Reducer function
     def reducer_count_ages(self, key, values):
        yield key, sum(values)
