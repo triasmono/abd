@@ -1,58 +1,33 @@
-"""
-MapReduce is a data processing job which splits the input data into independent chunks,
-which are then processed by the map function and
-then reduced by grouping similar sets of the data.
+# Reference : https://medium.com/geekculture/mapreduce-with-python-5d12a772d5b3
+# run : python mapReduce.py dataset/HepatitisCdata.csv
 
-"""
-# Load library
-import pandas as pd
+# run with hadoop : python [python file] -r hadoop --hadoop-streaming-jar [The_path_of_Hadoop_Streaming_jar] [dataset]
 
-# Load dataset
-df = pd.read_csv('HepatitisCdata.csv')
+from mrjob.job import MRJob
+from mrjob.step import MRStep
+import csv
 
-"""
-Data Exploration
+# split data by ,
+columns = 'Category,Age'.split(',')
+class MapReduce(MRJob):
+    def steps(self):
+        return[
+            MRStep(mapper=self.mapper_get_ages,
+                  reducer=self.reducer_count_ages)
+        ]
+#Mapper function
+    def mapper_get_ages(self, _, line):
+       reader = csv.reader([line])
+       for row in reader:
+           zipped=zip(columns,row)
+           diction=dict(zipped)
+           age=diction['Age']
+           #outputing as key value pairs
+           yield age, 1
 
-#print(df.shape)
-#print(df)
-#print(df['Age'])
-"""
+#Reducer function
+    def reducer_count_ages(self, key, values):
+       yield key, sum(values)
 
-# Generic Fuction
-def multiply(x):
-    return (x*x)
-
-def add(x):
-    return (x+x)
-
-# MAP
-# Mengkonversi seberapa jauh dari tingkat kolesterol aman (6) responden pada dataset
-batas_aman = 6
-def kolesterol_limit(x):
-    return(batas_aman-x)
-
-kolesterol = df['CHOL']
-safe_value= map(kolesterol_limit, kolesterol)
-print('contoh map ---------- mencari selisih kolesterol dengan batas aman')
-print(list(safe_value))
-
-# FILTER
-# Menampilikan list usia dibawah 30 tahun yang masuk menjadi responden dalam dataset
-age_param = 30
-number_list = df['Age']
-young = list(filter(lambda x: x < age_param, number_list))
-print('contoh filter ---------- menampilkan usia muda yang menjadi responden')
-print(young)
-
-#REDUCE
-#product = 1
-#list = [1, 2, 3, 4]
-#for age in list:
-#    mean = age * num
-
-from functools import reduce
-list_aman = reduce((lambda x, y:x/y), kolesterol)
-kolesterol_tertinggi = reduce(lambda a, b: a if a > b else b, kolesterol)
-
-print('contoh reduce ---------- menampilkan kolesterol tertinggi')
-print(kolesterol_tertinggi)
+if __name__ == "__main__":
+    MapReduce.run()
