@@ -1,3 +1,4 @@
+# learn how mapReduce work
 # Reference : https://medium.com/geekculture/mapreduce-with-python-5d12a772d5b3
 # run : python mapReduce.py dataset/HepatitisCdata.csv
 
